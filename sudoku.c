@@ -2,18 +2,10 @@
 #include <stdio.h>
 #include <string.h>
 
-// --- Static (Private) Helper Functions ---
-
-/**
- * @brief Gets the 1D box index (0-8) from a (row, col) coordinate.
- */
 static int get_box_index(int r, int c) {
     return (r / 3) * 3 + (c / 3);
 }
 
-/**
- * @brief Checks if placing 'num' at (r, c) is valid *right now*. O(1).
- */
 static bool is_valid(const SudokuGame* game, int r, int c, uint8_t num) {
     const uint16_t bit = 1 << (num - 1);
     const int box_idx = get_box_index(r, c);
@@ -23,9 +15,6 @@ static bool is_valid(const SudokuGame* game, int r, int c, uint8_t num) {
              (game->box_masks[box_idx] & bit));
 }
 
-/**
- * @brief Sets a cell's value and updates all associated bitmasks.
- */
 static void set_cell(SudokuGame* game, int r, int c, uint8_t num, bool is_initial) {
     game->board[r][c] = num;
     game->initial_board[r][c] = is_initial;
@@ -40,9 +29,6 @@ static void set_cell(SudokuGame* game, int r, int c, uint8_t num, bool is_initia
     game->cells_filled++;
 }
 
-/**
- * @brief Clears a cell and updates all associated bitmasks.
- */
 static void clear_cell(SudokuGame* game, int r, int c) {
     if (game->board[r][c] == 0) {
         return; // Already empty
@@ -61,9 +47,6 @@ static void clear_cell(SudokuGame* game, int r, int c) {
     game->cells_filled--;
 }
 
-/**
- * @brief Helper to count set bits in a 16-bit integer.
- */
 static int count_set_bits(uint16_t n) {
     int count = 0;
     while (n > 0) {
@@ -106,10 +89,6 @@ static bool find_best_empty_cell(SudokuGame* game, int* best_r, int* best_c) {
     return found;
 }
 
-
-/**
- * @brief The recursive backtracking core.
- */
 static bool solve_recursive(SudokuGame* game) {
     int r, c;
     
@@ -133,8 +112,6 @@ static bool solve_recursive(SudokuGame* game) {
     return false;
 }
 
-// --- Public Function Implementations ---
-
 void init_game(SudokuGame* game, const uint8_t puzzle[9][9]) {
     memset(game, 0, sizeof(SudokuGame));
 
@@ -146,31 +123,6 @@ void init_game(SudokuGame* game, const uint8_t puzzle[9][9]) {
             }
         }
     }
-}
-
-void display_board(const SudokuGame* game) {
-    // This is the console display function.
-    // It's not used by Raylib, but it's good to keep
-    // for testing the logic separately.
-    printf("    A B C   D E F   G H I\n");
-    printf("  +-------+-------+-------+\n");
-    for (int r = 0; r < 9; r++) {
-        if (r % 3 == 0 && r != 0) {
-            printf("  |-------+-------+-------|\n");
-        }
-        printf("%d | ", r + 1);
-        for (int c = 0; c < 9; c++) {
-            if (c % 3 == 0 && c != 0) printf("| ");
-            uint8_t num = game->board[r][c];
-            if (num == 0) {
-                printf(". ");
-            } else {
-                printf("%u ", num);
-            }
-        }
-        printf("|\n");
-    }
-    printf("  +-------+-------+-------+\n");
 }
 
 bool make_move(SudokuGame* game, int r, int c, uint8_t num) {
@@ -217,8 +169,6 @@ bool is_board_solved(const SudokuGame* game) {
 }
 
 bool solve_sudoku(SudokuGame* game) {
-    // Create a temporary game state to solve,
-    // preserving the user's board.
     SudokuGame temp_game;
     uint8_t initial_puzzle[9][9];
     
@@ -235,10 +185,9 @@ bool solve_sudoku(SudokuGame* game) {
     init_game(&temp_game, initial_puzzle);
 
     if (solve_recursive(&temp_game)) {
-        // Copy the solution back to the main game object.
         memcpy(game, &temp_game, sizeof(SudokuGame));
         return true;
     }
     
-    return false; // Unsolvable
+    return false; 
 }

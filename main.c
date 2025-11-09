@@ -63,7 +63,7 @@ const uint8_t puzzle_bank[NUM_PUZZLES][9][9] = {
 // --- Main Function ---
 int main(void) {
     // --- Initialization ---
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Sudoku - Raylib");
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Sudoku");
     srand(time(NULL));
 
     SudokuGame game;
