@@ -56,9 +56,6 @@ static int count_set_bits(uint16_t n) {
     return count;
 }
 
-/**
- * @brief OPTIMIZATION: Finds the empty cell with the Minimum Remaining Values (MRV).
- */
 static bool find_best_empty_cell(SudokuGame* game, int* best_r, int* best_c) {
     int min_options = 10;
     bool found = false;
@@ -151,21 +148,7 @@ bool make_move(SudokuGame* game, int r, int c, uint8_t num) {
 }
 
 bool is_board_solved(const SudokuGame* game) {
-    if (game->cells_filled != 81) {
-        return false;
-    }
-
-    const uint16_t full_mask = (1 << 9) - 1; // 511
-
-    for (int i = 0; i < 9; i++) {
-        if (game->row_masks[i] != full_mask ||
-            game->col_masks[i] != full_mask ||
-            game->box_masks[i] != full_mask) {
-            return false;
-        }
-    }
-    
-    return true;
+    return game->cells_filled == 81;
 }
 
 bool solve_sudoku(SudokuGame* game) {
